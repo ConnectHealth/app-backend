@@ -1,0 +1,10 @@
+{
+  "id": {
+    "AttributeValueList": [
+      {
+        "S": "abc"
+      }
+    ],
+    "ComparisonOperator": "EQ"
+  }
+}
