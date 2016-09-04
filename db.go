@@ -20,7 +20,7 @@ type Patient struct {
 	LastName  string `json:"lastName"`
 }
 
-func getPatients() ([]Patient, error) {
+func GetPatients() ([]Patient, error) {
 	svc, err := getSvc()
 	if err != nil {
 		return nil, err
