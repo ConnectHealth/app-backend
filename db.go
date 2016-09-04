@@ -26,7 +26,9 @@ func GetPatients() ([]Patient, error) {
 		return nil, err
 	}
 
-	params := &dynamodb.QueryInput{
+	// setup(svc)
+
+	params := &dynamodb.ScanInput{
 		TableName: aws.String(PatientsTableName), // Required
 		AttributesToGet: []*string{
 			aws.String("id"),
@@ -34,21 +36,9 @@ func GetPatients() ([]Patient, error) {
 			aws.String("lastName"),
 		},
 		ConsistentRead: aws.Bool(true),
-		// Limit:                aws.Int64(1),
-		// ReturnConsumedCapacity: aws.String("ReturnConsumedCapacity"),
-		Select: aws.String(dynamodb.SelectSpecificAttributes),
-		KeyConditions: map[string]*dynamodb.Condition{
-			"id": {
-				ComparisonOperator: aws.String(dynamodb.ComparisonOperatorEq),
-				AttributeValueList: []*dynamodb.AttributeValue{
-					{
-						S: aws.String("abc"),
-					},
-				},
-			},
-		},
+		Select:         aws.String(dynamodb.SelectSpecificAttributes),
 	}
-	resp, err := svc.Query(params)
+	resp, err := svc.Scan(params)
 	if err != nil {
 		fmt.Println("oh no")
 		return nil, err
@@ -78,15 +68,18 @@ func setup(svc *dynamodb.DynamoDB) error {
 	}
 
 	// insert some data
-	p := Patient{
-		"abc",
-		"kal",
-		"bek",
+	patients := []Patient{
+		Patient{"1", "John", "Smith"},
+		Patient{"2", "Jane", "Smith"},
+		Patient{"3", "Jack", "Jones"},
 	}
-	err = putPatient(svc, p)
-	if err != nil {
-		fmt.Println("oh no")
-		return err
+
+	for _, p := range patients {
+		err = putPatient(svc, p)
+		if err != nil {
+			fmt.Println("oh no")
+			return err
+		}
 	}
 	return nil
 }
@@ -105,8 +98,6 @@ func putPatient(svc *dynamodb.DynamoDB, patient Patient) error {
 	if err != nil {
 		return errors.Wrap(err, "could not convert patient")
 	}
-	fmt.Println(patient)
-	fmt.Println(item)
 	params := &dynamodb.PutItemInput{
 		Item:      item,
 		TableName: aws.String(PatientsTableName),

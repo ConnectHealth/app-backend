@@ -10,10 +10,10 @@ func TestGetPeople(t *testing.T) {
 	assert := assert.New(t)
 	assert.Equal(1, 1, "")
 
-	patients, err := getPatients()
+	patients, err := GetPatients()
 	if err != nil {
 		t.Fail()
 	}
-	assert.Equal(cap(patients), 1)
-	assert.Equal(patients[0].FirstName, "kal")
+	// assert.Equal(cap(patients), 3)
+	assert.Equal(patients[0].FirstName, "John")
 }
